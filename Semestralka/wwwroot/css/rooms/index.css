@@ -1,0 +1,42 @@
+﻿body {
+
+}
+
+.container{
+    text-align:center;
+}
+
+.rooms-container{
+    height: auto;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.room_name{
+    font-size: 30px;
+    margin-bottom: 5px;
+}
+
+.room_link{
+    font-size: 20px;
+  
+}
+
+.room_description{
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.room{
+    flex-basis: 30%;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin: 0 10px;
+    padding: 5px;
+}
+
+
+

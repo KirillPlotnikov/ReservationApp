@@ -1,0 +1,111 @@
+﻿@model SemestralkaDataControl.Models.Room
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+@functions
+{
+    public string GetTodaysDateFormatted()
+    {
+
+        return String.Format("{0:yyyy-MM-dd}", DateTime.Now);
+    }
+    public string GetTodaysDateFormatted(DateTime datetime)
+    {
+
+        return String.Format("{0:yyyy-MM-dd}", datetime);
+    }
+}
+
+@section Links {
+    <link rel="stylesheet" href="~/css/rooms/detail.css" asp-append-version="true" />
+}
+
+
+@if (ViewBag.Error != null && ViewBag.Error == true)
+{
+    <div class="error">Someone has already booked reservation at this time</div>
+}
+
+<h1>Booking for room: @Model.Name</h1>
+<p class="room_description">@Model.Description</p>
+
+
+<div class="content-container">
+    
+        <div id="left-side">
+            <label>Date:</label>
+            <input type="date" id="date-input" name="date" min="@GetTodaysDateFormatted()">
+            <a asp-action="Index" asp-controller="Rooms" class="back-link">Back</a>
+        </div>
+
+        <div id="right-side">
+            <div id="right-side-content">
+
+            </div>
+        </div>
+</div>
+
+
+
+@section Scripts{
+    <script src="~/js/rooms/detail.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var selected = null;
+            $("#date-input").change(function () {
+                selected = null;
+                var date = new Date($('#date-input').val());
+                day = date.getDate();
+                month = date.getMonth() + 1;
+                year = date.getFullYear();
+                $("#next").remove();
+                $("#right-side-content").empty();
+                if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) {
+                    ("#right-side").empty();
+                } else {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("GetFreeReservationTimes")",
+                        data: { date: year + "-" + month + "-" + day, id: @Model.Id },
+                        dataType: "text",
+                        success: function (data) {
+                            var obj = JSON.parse(data);
+                            
+                            
+
+                            if (obj.length == 0) {
+                                $("#right-side-content").append($("<p>").addClass("warning").text("There are no free booking times for this date"));
+                            } else {
+                                obj.forEach(function (entry) {
+                                    var toEntry = entry + 1;
+                                    $("#right-side-content").append(
+                                        $("<div>").addClass("freeTime").text(entry + ":00 - " + toEntry + ":00").attr("id", entry));
+                                });
+
+                                if (obj.length > 0) {
+                                    $("#right-side").append($("<button>").addClass("btn-primary").attr("id", "next").text("Next"));
+                                }
+                                $(".freeTime").click(function () {
+                                    $(".freeTime").removeClass("selected");
+                                    $(this).addClass("selected");
+                                    selected = $(this).attr("id");
+                                });
+                                $("#next").click(function () {
+                                    window.location.replace("@Url.Action("Create", "Reservations")" + "?id=" +@Model.Id+"&date=" + year + "/" + month + "/" + day + "&timeFrom=" + selected);
+                                });
+                            }
+
+
+
+                        }
+                    });
+                }
+            });
+
+
+        });
+    </script>
+}

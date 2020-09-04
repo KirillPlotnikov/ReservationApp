@@ -1,0 +1,44 @@
+﻿@model IEnumerable<SemestralkaDataControl.Models.Room>
+
+@{
+    ViewData["Title"] = "List of Rooms";
+}
+
+@section Links {
+    <link rel="stylesheet" href="~/css/rooms/index.css" asp-append-version="true" />
+}
+
+
+<h1>List of rooms</h1>
+
+
+<div class="rooms-container">
+    @foreach (var item in Model.ToList())
+    {
+        <div class="room">
+            <p class="room_name">@item.Name</p>
+            <a class="room_link" asp-controller="Rooms" asp-action="Details" asp-route-id="@item.Id">Book now!</a>
+            <div class="room_description">@item.Description</div>
+        </div>
+    }
+</div>
+
+
+
+
+@section Scripts{ 
+  <script src="~/js/rooms/index.js" asp-append-version="true"></script>
+  <script>
+      $(document).ready(function () {
+          $(".room_description").each(function () {
+              var truncated = this.innerHTML;
+              if (truncated.length > 197) {
+                  truncated = truncated.substr(0, 197) + '...';
+              }
+              this.innerHTML = truncated;
+          });
+      });
+      
+   
+  </script>
+}

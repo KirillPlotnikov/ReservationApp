@@ -1,0 +1,13 @@
+﻿@model List<int>
+
+@functions{
+    public string GetString(int i)
+    {
+        return $"{i}:00";
+    }
+}
+
+@foreach(var item in Model)
+{
+    <div class="freeTime">@GetString(item)</div>
+}
